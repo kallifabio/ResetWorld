@@ -1,0 +1,15 @@
+name: ResetWorld
+api-version: 1.21
+version: 1.0
+author: kallifabio
+main: de.kallifabio.resetworld.ResetWorld
+
+commands:
+  resetworld:
+  status:
+  statuscreate:
+  statusset:
+  statusremove:
+  trade:
+  wartung:
+  statuschat:

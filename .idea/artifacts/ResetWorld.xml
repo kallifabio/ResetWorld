@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="ResetWorld">
+    <output-path>$PROJECT_DIR$/../../Plugin Output/ResetWorld</output-path>
+    <root id="archive" name="ResetWorld.jar">
+      <element id="module-output" name="ResetWorld" />
+    </root>
+  </artifact>
+</component>
