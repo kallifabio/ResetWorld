@@ -22,7 +22,7 @@
 ### ● Last Playerlocation Logger
 ### ● Custom FileBuilder Klasse (Developer Feature)
 ### ● Custom ItemBuilder Klasse (Developer Feature)
-#
+
 ## Geplante Funktionen
 ### ● Spieler-Mob Verwandlung
 ### ● Message-Logging eines Spielers (Chat, Status-Chat, MSG/Whisper)
