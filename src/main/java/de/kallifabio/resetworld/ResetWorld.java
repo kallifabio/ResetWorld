@@ -65,6 +65,7 @@ public class ResetWorld extends JavaPlugin implements Listener {
 
         getCommand("resetworld").setExecutor(new resetWorldCommand());
 
+        getCommand("playersize").setExecutor(new playersizeCommand());
         getCommand("trade").setExecutor(new tradeCommand());
         getCommand("wartung").setExecutor(new wartungCommand());
 

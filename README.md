@@ -20,6 +20,7 @@
 ### ● Bei Death - Spielerkopf Drop (10 %)
 ### ● Death Count unter Nametag
 ### ● Last Playerlocation Logger
+### ● Spielergröße ändern (Klein, Normal, Groß)
 ### ● Custom FileBuilder Klasse (Developer Feature)
 ### ● Custom ItemBuilder Klasse (Developer Feature)
 

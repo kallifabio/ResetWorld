@@ -8,11 +8,13 @@
 package de.kallifabio.resetworld.listeners;
 
 import de.kallifabio.resetworld.ResetWorld;
+import de.kallifabio.resetworld.enums.PlayerSizeType;
 import de.kallifabio.resetworld.managers.DeathManager;
 import de.kallifabio.resetworld.managers.LastLocationManager;
 import de.kallifabio.resetworld.managers.MaintenanceManager;
 import de.kallifabio.resetworld.managers.StatusManager;
 import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -56,6 +58,8 @@ public class PlayerListener implements Listener {
         if (MaintenanceManager.isMaintenance() && !player.getName().equals("kallifabio") && !player.getName().equals("BeFizzi")) {
             event.getPlayer().kickPlayer("§4§lDieser Server befindet sich derzeit in Wartung");
         }
+
+        player.getAttribute(Attribute.GENERIC_SCALE).setBaseValue(PlayerSizeType.NORMAL.getScale());
     }
 
     @EventHandler
