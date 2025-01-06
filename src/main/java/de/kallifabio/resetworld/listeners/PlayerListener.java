@@ -21,7 +21,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.inventory.ItemStack;
@@ -127,10 +126,13 @@ public class PlayerListener implements Listener {
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         player = event.getPlayer();
         String status = StatusManager.getStatusPlayer(player.getName());
+        String message = event.getMessage();
+
+        String formattedMessage = player.getName() + ": " + message;
 
         if (status != null) {
             ChatColor color = StatusManager.getStatusColor(status);
-            event.setFormat(color + "[" + status + "] " + ChatColor.RESET + event.getFormat());
+            event.setFormat(color + "[" + status + "] " + ChatColor.RESET + formattedMessage);
         }
     }
 
