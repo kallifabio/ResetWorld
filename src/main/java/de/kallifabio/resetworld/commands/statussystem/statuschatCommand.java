@@ -53,7 +53,7 @@ public class statuschatCommand implements CommandExecutor {
             for (String playerName : playersInStatus) {
                 Player targetPlayer = Bukkit.getPlayer(playerName);
                 if (targetPlayer != null && targetPlayer.isOnline()) {
-                    targetPlayer.sendMessage(color + "[" + status + "-Chat] " + ChatColor.RESET + player.getName() + ": " + message);
+                    targetPlayer.sendMessage(color + "[" + status + " - Chat] " + ChatColor.RESET + player.getName() + ": " + message);
                 }
             }
             return true;

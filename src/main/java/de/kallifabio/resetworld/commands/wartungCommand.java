@@ -25,7 +25,7 @@ public class wartungCommand implements CommandExecutor {
         if (cmd.getName().equalsIgnoreCase("wartung")) {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
-                if (!player.isOp() || !player.getName().equals("kallifabio") && !player.getName().equals("BeFizzi")) {
+                if (!player.isOp() && !player.getName().equals("kallifabio") && !player.getName().equals("BeFizzi")) {
                     player.sendMessage(ResetWorld.getNoPermission());
                     return true;
                 }

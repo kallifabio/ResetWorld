@@ -9,6 +9,7 @@ package de.kallifabio.resetworld.commands.statussystem;
 
 import de.kallifabio.resetworld.ResetWorld;
 import de.kallifabio.resetworld.managers.StatusManager;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -31,9 +32,14 @@ public class statussetCommand implements CommandExecutor {
                 sender.sendMessage(ResetWorld.getPrefix() + "§cBitte benutze §7/statusset <Status> <Player>");
             } else {
                 Player player = (Player) sender;
-                StatusManager.setStatusPlayer(args[0], args[1]);
-                player.sendMessage(ResetWorld.getPrefix() + "§2Der Spieler §e" + args[1] + " §2ist jetzt im Status §e" + args[0]);
-                player.kickPlayer(args[1]);
+                Player targetPlayer = Bukkit.getPlayer(args[1]);
+                if (targetPlayer != null) {
+                    StatusManager.setStatusPlayer(args[0], args[1]);
+                    player.sendMessage(ResetWorld.getPrefix() + "§2Der Spieler §e" + args[1] + " §2ist jetzt im Status §e" + args[0]);
+                    targetPlayer.kickPlayer(args[1]);
+                } else {
+                    player.sendMessage(ResetWorld.getPrefix() + "§cDer Spieler §e" + args[1] + " §cist nicht online");
+                }
             }
         }
         return false;

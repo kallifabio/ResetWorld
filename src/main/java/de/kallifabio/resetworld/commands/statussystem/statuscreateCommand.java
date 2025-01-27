@@ -26,7 +26,7 @@ public class statuscreateCommand implements CommandExecutor, TabCompleter {
         if (cmd.getName().equalsIgnoreCase("statuscreate")) {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
-                if (!player.isOp() || !player.getName().equals("kallifabio") && !player.getName().equals("BeFizzi")) {
+                if (!player.isOp() && !player.getName().equals("kallifabio") && !player.getName().equals("BeFizzi")) {
                     player.sendMessage(ResetWorld.getNoPermission());
                     return true;
                 }

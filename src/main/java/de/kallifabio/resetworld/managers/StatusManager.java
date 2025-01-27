@@ -10,7 +10,6 @@ package de.kallifabio.resetworld.managers;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
@@ -73,8 +72,21 @@ public class StatusManager {
         saveStatusData();
     }
 
+    public static boolean getPlayer(String playerName) {
+        Set<String> statuses = getStatusdata().getConfigurationSection("Status").getKeys(true);
+
+        for (String status : statuses) {
+            List<String> players = getStatusdata().getStringList("Status." + status + ".Players");
+            if (players.contains(playerName)) {
+                return false;
+            }
+        }
+
+        return false;
+    }
+
     public static String getStatusPlayer(String playerName) {
-        Set<String> statuses = getStatusdata().getConfigurationSection("Status").getKeys(false);
+        Set<String> statuses = getStatusdata().getConfigurationSection("Status").getKeys(true);
 
         for (String status : statuses) {
             List<String> players = getStatusdata().getStringList("Status." + status + ".Players");

@@ -7,8 +7,11 @@
 
 package de.kallifabio.resetworld.managers;
 
+import de.kallifabio.resetworld.ResetWorld;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -39,7 +42,6 @@ public class LastLocationManager {
     }
 
     public static void setLastLocation(String player, Location location) {
-        getLastlocationdata().set("LastLocation", player);
         getLastlocationdata().set("LastLocation." + player + ".World", location.getWorld().getName());
         getLastlocationdata().set("LastLocation." + player + ".X", location.getX());
         getLastlocationdata().set("LastLocation." + player + ".Y", location.getY());
@@ -57,5 +59,28 @@ public class LastLocationManager {
         }
     }
 
+    public static Location getLastLocation(String player) {
+        World world = Bukkit.getWorld(getLastlocationdata().getString("LastLocation." + player + ".World"));
+        double x = getLastlocationdata().getDouble("LastLocation." + player + ".X");
+        double y = getLastlocationdata().getDouble("LastLocation." + player + ".Y");
+        double z = getLastlocationdata().getDouble("LastLocation." + player + ".Z");
+        Location location = new Location(world, x, y, z);
+        location.setYaw(getLastlocationdata().getInt("LastLocation." + player + ".Yaw"));
+        location.setPitch(getLastlocationdata().getInt("LastLocation." + player + ".Pitch"));
+        return location;
+    }
+
+    public static String getFormattedLocation(String player) {
+        Location location = getLastLocation(player);
+        if (location == null) {
+            return "Die gespeicherte Location des Spielers ist nicht verfügbar.";
+        }
+        return ResetWorld.getPrefix() + "§eWelt: " + location.getWorld().getName() + "\n" + ResetWorld.getPrefix() +
+                "§eX: " + location.getX() + "\n" + ResetWorld.getPrefix() +
+                "§eY: " + location.getY() + "\n" + ResetWorld.getPrefix() +
+                "§eZ: " + location.getZ() + "\n" + ResetWorld.getPrefix() +
+                "§eYaw: " + location.getYaw() + "\n" + ResetWorld.getPrefix() +
+                "§ePitch: " + location.getPitch();
+    }
 
 }
