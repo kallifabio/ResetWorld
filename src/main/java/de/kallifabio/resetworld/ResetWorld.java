@@ -8,6 +8,10 @@
 package de.kallifabio.resetworld;
 
 import de.kallifabio.resetworld.commands.*;
+import de.kallifabio.resetworld.commands.bansystem.banCommand;
+import de.kallifabio.resetworld.commands.bansystem.baninfoCommand;
+import de.kallifabio.resetworld.commands.bansystem.tempbanCommand;
+import de.kallifabio.resetworld.commands.bansystem.unbanCommand;
 import de.kallifabio.resetworld.commands.statussystem.*;
 import de.kallifabio.resetworld.commands.worldsystem.resetWorldCommand;
 import de.kallifabio.resetworld.listeners.MobSpawnListener;
@@ -78,9 +82,7 @@ public class ResetWorld extends JavaPlugin implements Listener {
         getCommand("statuscreate").setExecutor(new statuscreateCommand());
         getCommand("statusremove").setExecutor(new statusremoveCommand());
         getCommand("statusset").setExecutor(new statussetCommand());
-
         ///getCommand("resetworld").setExecutor(new resetWorldCommand());
-
         getCommand("broadcast").setExecutor(new broadcastCommand());
         getCommand("endersee").setExecutor(new enderseeCommand());
         getCommand("fly").setExecutor(new flyCommand());
@@ -93,7 +95,10 @@ public class ResetWorld extends JavaPlugin implements Listener {
         getCommand("sit").setExecutor(new sitCommand());
         getCommand("trade").setExecutor(new tradeCommand());
         getCommand("wartung").setExecutor(new wartungCommand());
-
+        getCommand("ban").setExecutor(new banCommand());
+        getCommand("tempban").setExecutor(new tempbanCommand());
+        getCommand("unban").setExecutor(new unbanCommand());
+        getCommand("baninfo").setExecutor(new baninfoCommand());
     }
 
     public ArmorStand spawnPoseArmorStand(Location location, Player player, boolean laying) {

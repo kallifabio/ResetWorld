@@ -32,6 +32,7 @@ import org.bukkit.util.Vector;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 public class PlayerListener implements Listener {
 
@@ -72,15 +73,10 @@ public class PlayerListener implements Listener {
         List<String> playerInStatus = StatusManager.getStatusPlayerList(status);
         ChatColor color = StatusManager.getStatusColor(status);
 
-        if (playerInStatus.isEmpty()) {
+        if (status == null || playerInStatus.isEmpty()) {
             player.sendMessage(ResetWorld.getPrefix() + "§cDu bist in keinem Status");
         } else {
-            for (String playerName : playerInStatus) {
-                Player targetPlayer = Bukkit.getPlayer(playerName);
-                if (targetPlayer != null) {
-                    targetPlayer.sendMessage(ResetWorld.getPrefix() + "§7Du bist in dem Status " + color + status);
-                }
-            }
+            player.sendMessage(ResetWorld.getPrefix() + "§7Du bist in dem Status " + color + status);
         }
     }
 
@@ -99,6 +95,30 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
+    public void onPlayerLogin(PlayerLoginEvent event) {
+        Player player = event.getPlayer();
+        if (BanManager.getBanData().contains("Bans." + player.getName())) {
+            String reason = BanManager.getBanReason(player.getName());
+            long time = BanManager.getBanTime(player.getName());
+            String bannedFrom = BanManager.getBannedFrom(player.getName());
+
+            if (time > 0 && System.currentTimeMillis() > time) {
+                BanManager.unbanPlayer(player.getName());
+            }
+
+            event.disallow(PlayerLoginEvent.Result.KICK_BANNED, "§4Du wurdest gebannt!\nGrund: §7" + reason + "\n§4Dauer: §7" + (time == -1 ? "Permanent" : formatRemainingTime(time)) + "\n§4Von: §7" + bannedFrom);
+        }
+    }
+
+    private String formatRemainingTime(long expiry) {
+        long remaining = expiry - System.currentTimeMillis();
+        long days = TimeUnit.MILLISECONDS.toDays(remaining);
+        long hours = TimeUnit.MILLISECONDS.toHours(remaining) % 24;
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(remaining) % 60;
+        return days + " Tage, " + hours + " Stunden, " + minutes + " Minuten";
+    }
+
+    @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         player = event.getPlayer();
         event.setQuitMessage(ResetWorld.getPrefix() + "§7" + player.getName() + " §cist für heute offline");
@@ -111,6 +131,11 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerKick(PlayerKickEvent event) {
         player = event.getPlayer();
+
+        if (BanManager.getBanData().contains("Bans." + player.getName())) {
+            return;
+        }
+
         if (!MaintenanceManager.isMaintenance()) {
             event.setReason(ResetWorld.getPrefix() + "§7Du wurdest gekickt. Es kann sein, dass dein Status geändert wurde");
         }
@@ -157,16 +182,12 @@ public class PlayerListener implements Listener {
         Location worldSpawn = player.getWorld().getSpawnLocation();
         double tolerance = 0.0;
 
-        player.sendMessage("Respawn Location: " + respawnLocation);
-        player.sendMessage("World Spawn Location: " + worldSpawn);
-
         if (respawnLocation.distance(worldSpawn) <= tolerance) {
             player.sendMessage("Respawning at world spawn, teleporting to platform...");
             teleportToPlatform(player);
         }
 
         Location bedSpawnLocation = player.getBedSpawnLocation();
-        player.sendMessage("Bed Spawn Location: " + bedSpawnLocation);
 
         if (bedSpawnLocation == null) {
             player.sendMessage("No bed spawn, teleporting to platform...");
@@ -351,26 +372,18 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         Player carrier = event.getPlayer();
-
-        // Stelle sicher, dass das Ziel ein Spieler ist
         if (!(event.getRightClicked() instanceof Player)) return;
-
         Player target = (Player) event.getRightClicked();
 
-        // Spieler kann niemanden tragen, wenn er bereits jemanden trägt
         if (ResetWorld.getInstance().getCarryingMap().containsKey(carrier.getUniqueId())) {
             return;
         }
 
-        // Spieler kann nicht aufgenommen werden, wenn er getragen wird
         if (ResetWorld.getInstance().getCarryingMap().containsValue(target.getUniqueId())) {
             return;
         }
 
-        // Spieler aufnehmen
         ResetWorld.getInstance().getCarryingMap().put(carrier.getUniqueId(), target.getUniqueId());
-
-        // Setze den Zielspieler als Passagier
         carrier.addPassenger(target);
     }
 
@@ -382,7 +395,6 @@ public class PlayerListener implements Listener {
         if (isOnTeleportTrigger(playerLocation)) {
             teleportToPlatform(player);
         }
-
 
         //PlatformBorderManager borderManager = new PlatformBorderManager(platformCenter, platformRadius);
         //borderManager.handlePlayerMovement(event);

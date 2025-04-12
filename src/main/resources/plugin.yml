@@ -23,3 +23,7 @@ commands:
   lastlocation:
   broadcast:
   sit:
+  ban:
+  tempban:
+  unban:
+  baninfo:
