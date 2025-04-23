@@ -3,6 +3,7 @@ api-version: 1.21
 version: 1.0
 author: kallifabio
 main: de.kallifabio.resetworld.ResetWorld
+depend: [EhrenlosSpigotPermissionsSystem]
 
 commands:
   resetworld:

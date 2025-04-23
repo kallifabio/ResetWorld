@@ -16,6 +16,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class removeborderCommand implements CommandExecutor {
 
     @Override
@@ -23,7 +26,8 @@ public class removeborderCommand implements CommandExecutor {
         if (cmd.getName().equalsIgnoreCase("removeborder")) {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
-                if (!player.isOp() && !player.getName().equals("kallifabio") && !player.getName().equals("BeFizzi")) {
+                List<String> allowedUsers = Arrays.asList("kallifabio", "BeFizzi");
+                if (!(player.isOp() || allowedUsers.contains(player.getName()))) {
                     player.sendMessage(ResetWorld.getNoPermission());
                     return true;
                 }

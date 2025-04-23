@@ -16,6 +16,9 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class unbanCommand implements CommandExecutor {
 
     @Override
@@ -23,7 +26,8 @@ public class unbanCommand implements CommandExecutor {
         if (cmd.getName().equalsIgnoreCase("unban")) {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
-                if (!player.isOp() && !player.getName().equals("kallifabio") && !player.getName().equals("BeFizzi")) {
+                List<String> allowedUsers = Arrays.asList("kallifabio", "BeFizzi");
+                if (!(player.isOp() || allowedUsers.contains(player.getName()))) {
                     player.sendMessage(ResetWorld.getNoPermission());
                     return true;
                 }

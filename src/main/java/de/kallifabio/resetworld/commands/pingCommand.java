@@ -18,6 +18,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
 
 public class pingCommand implements CommandExecutor {
 
@@ -26,7 +28,8 @@ public class pingCommand implements CommandExecutor {
         if (cmd.getName().equalsIgnoreCase("ping")) {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
-                if (!player.isOp() && !player.getName().equals("kallifabio") && !player.getName().equals("BeFizzi")) {
+                List<String> allowedUsers = Arrays.asList("kallifabio", "BeFizzi");
+                if (!(player.isOp() || allowedUsers.contains(player.getName()))) {
                     player.sendMessage(ResetWorld.getNoPermission());
                     return true;
                 }

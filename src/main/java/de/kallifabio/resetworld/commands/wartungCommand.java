@@ -16,6 +16,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 public class wartungCommand implements CommandExecutor {
@@ -25,7 +27,8 @@ public class wartungCommand implements CommandExecutor {
         if (cmd.getName().equalsIgnoreCase("wartung")) {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
-                if (!player.isOp() && !player.getName().equals("kallifabio") && !player.getName().equals("BeFizzi")) {
+                List<String> allowedUsers = Arrays.asList("kallifabio", "BeFizzi");
+                if (!(player.isOp() || allowedUsers.contains(player.getName()))) {
                     player.sendMessage(ResetWorld.getNoPermission());
                     return true;
                 }

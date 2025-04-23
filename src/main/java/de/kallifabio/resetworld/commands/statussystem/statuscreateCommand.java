@@ -17,6 +17,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class statuscreateCommand implements CommandExecutor, TabCompleter {
@@ -26,7 +27,8 @@ public class statuscreateCommand implements CommandExecutor, TabCompleter {
         if (cmd.getName().equalsIgnoreCase("statuscreate")) {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
-                if (!player.isOp() && !player.getName().equals("kallifabio") && !player.getName().equals("BeFizzi")) {
+                List<String> allowedUsers = Arrays.asList("kallifabio", "BeFizzi");
+                if (!(player.isOp() || allowedUsers.contains(player.getName()))) {
                     player.sendMessage(ResetWorld.getNoPermission());
                     return true;
                 }

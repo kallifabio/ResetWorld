@@ -10,6 +10,7 @@ package de.kallifabio.resetworld.listeners;
 import de.kallifabio.resetworld.ResetWorld;
 import de.kallifabio.resetworld.enums.PlayerSizeType;
 import de.kallifabio.resetworld.managers.*;
+import net.ehrenlos.permissions.managers.PermissionManager;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
@@ -57,6 +58,13 @@ public class PlayerListener implements Listener {
             world.setDifficulty(difficulty);
         });
 
+        String currentGroup = PermissionManager.getPlayerGroup(player.getName());
+        if (currentGroup == null || currentGroup.equalsIgnoreCase("default")) {
+            if (!PermissionManager.isPlayerInAnyGroup(player.getName())) {
+                PermissionManager.setPlayerToGroup("default", player.getName(), "lifetime");
+            }
+        }
+
         updatePlayerTag(player);
 
         if (MaintenanceManager.isMaintenance() && !player.getName().equals("kallifabio") && !player.getName().equals("BeFizzi")) {
@@ -83,13 +91,13 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onServerListPing(ServerListPingEvent event) {
         if (MaintenanceManager.isMaintenance()) {
-            String motd = "§l§r        --<§e----- §fMinecraft ChaosCraft §e-----§r>--§r\n" +
-                    "§cWartung §7- §eDer Server ist momentan nicht verfügbar";
+            String motd = "§l§r       --<§e----- §2Minecraft §3ChaosCraft §e-----§r>--§r\n" +
+                    "§4Wartung §7- §cDer Server ist momentan nicht verfügbar";
             event.setMotd(motd);
             event.setMaxPlayers(0);
         } else {
-            String motd = "§l§r        --<§e----- §fMinecraft ChaosCraft §e-----§r>--§r\n" +
-                    "§l  §c                 [1.21] §fHosted by Fizzi";
+            String motd = "§l§r       --<§e----- §2Minecraft §3ChaosCraft §e-----§r>--§r\n" +
+                    "§l§7          powered by §eChaosCraft Team §c[1.21.1]";
             event.setMotd(motd);
         }
     }
@@ -198,15 +206,22 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         player = event.getPlayer();
-        String status = StatusManager.getStatusPlayer(player.getName());
+
         String message = event.getMessage();
 
-        String formattedMessage = player.getName() + ": " + message;
+        String status = StatusManager.getStatusPlayer(player.getName());
+        ChatColor color = status != null ? StatusManager.getStatusColor(status) : null;
+        String statusPrefix = status != null ? color + "[" + status + "] " + ChatColor.RESET : "";
 
-        if (status != null) {
-            ChatColor color = StatusManager.getStatusColor(status);
-            event.setFormat(color + "[" + status + "] " + ChatColor.RESET + formattedMessage);
+        String groupPrefix = "";
+        if (PermissionManager.shouldShowPrefix(player.getName())) {
+            String group = PermissionManager.getPlayerGroup(player.getName());
+            if (group != null) {
+                groupPrefix = PermissionManager.getGroupPrefix(group);
+            }
         }
+
+        event.setFormat(statusPrefix + groupPrefix + player.getName() + " §8» §f" + message);
     }
 
     @EventHandler
@@ -437,8 +452,8 @@ public class PlayerListener implements Listener {
 
     private void updatePlayerTag(Player player) {
         Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
-        Objective objective = scoreboard.getObjective("deaths");
 
+        Objective objective = scoreboard.getObjective("deaths");
         if (objective == null) {
             objective = scoreboard.registerNewObjective("deaths", "dummy", "§4Tod(e)");
             objective.setDisplaySlot(DisplaySlot.BELOW_NAME);
@@ -449,22 +464,38 @@ public class PlayerListener implements Listener {
             score.setScore(DeathManager.getDeath(player.getName()));
         }, 20L, 20L);
 
-        player.setScoreboard(scoreboard);
+        String group = PermissionManager.getPlayerGroup(player.getName());
+        String groupPrefix = "";
+        int sortId = 999;
+
+        if (PermissionManager.shouldShowPrefix(player.getName()) && group != null) {
+            groupPrefix = PermissionManager.getGroupPrefix(group);
+            sortId = PermissionManager.getGroupSortId(group);
+        }
 
         String status = StatusManager.getStatusPlayer(player.getName());
+        ChatColor statusColor = status != null ? StatusManager.getStatusColor(status) : null;
+        String statusFormatted = status != null ? statusColor + "[" + status + "] " + ChatColor.RESET : "";
 
-        if (status != null) {
-            ChatColor color = StatusManager.getStatusColor(status);
-            String teamName = status.substring(0, Math.min(status.length(), 16));
+        // Kombinierter Prefix (Gruppe + Status)
+        String fullPrefix = groupPrefix + statusFormatted;
 
-            Team team = scoreboard.getTeam(teamName);
-            if (team == null) {
-                team = scoreboard.registerNewTeam(teamName);
-                //team.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER);
-            }
+        // Team für Tab & Nametag
+        String teamName = "z" + String.format("%03d", sortId);
+        if (teamName.length() > 16) teamName = teamName.substring(0, 16); // Max Teamname: 16 Zeichen
 
-            team.setPrefix(color + "[" + status + "] " + ChatColor.RESET);
-            team.addEntry(player.getName());
+        // Team holen/erstellen
+        Team team = scoreboard.getTeam(teamName);
+        if (team == null) {
+            team = scoreboard.registerNewTeam(teamName);
+        }
+
+        team.setPrefix(groupPrefix);
+        team.addEntry(player.getName());
+        //team.setSuffix(statusFormatted);
+
+        if (!player.getScoreboard().equals(scoreboard)) {
+            player.setScoreboard(scoreboard);
         }
     }
 
